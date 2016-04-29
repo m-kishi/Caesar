@@ -1,1 +1,1 @@
-The Reversi program that is my AI practice.
+The Reversi program for my AI practice.
