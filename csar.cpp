@@ -18,7 +18,7 @@
 // アルファ・ベータ法による探索
 int alpha_beta_pruning(board_t*, player_t, int, int, int, bitboard_t[]);
 // 評価値を計算する
-int evaluation_value(board_t*, player_t);
+int evaluation_value(board_t*);
 // 盤面の状態をfromからdestへコピーする
 void board_copy(board_t*, board_t*);
 
@@ -41,7 +41,7 @@ int alpha_beta_pruning(board_t *board, player_t player, int depth, int alpha, in
   // 想定の深さまで到達するか終局したら探索終了
   if (depth == 0 || board->status == OVER) {
     // 現在の局面の評価値を返却する
-    return evaluation_value(board, player);
+    return evaluation_value(board);
   }
 
   // 盤面のバックアップ
@@ -104,10 +104,10 @@ int alpha_beta_pruning(board_t *board, player_t player, int depth, int alpha, in
 // 評価値を計算する
 // 単純に"自石の数-他石の数"を評価値とする
 // ==================================================
-int evaluation_value(board_t *board, player_t player) {
+int evaluation_value(board_t *board) {
   int nblack = count_of_discs(board->black);
   int nwhite = count_of_discs(board->white);
-  if (player == BLACK) {
+  if (board->player == BLACK) {
     return nblack - nwhite;
   } else {
     return nwhite - nblack;
