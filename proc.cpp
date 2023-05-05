@@ -81,16 +81,16 @@ void check_board_status(board_t *board) {
 }
 
 // ==================================================
-// 現在手番のプレイヤのビットボードを取得する
+// 現在手番のプレイヤーのビットボードを取得する
 // ==================================================
-bitboard_t get_player_bb(board_t *board) {
+bitboard_t get_own_bb(board_t *board) {
   return board->player == BLACK ? board->black : board->white;
 }
 
 // ==================================================
-// 現在手番でないプレイヤのビットボードを取得する
+// 現在手番でないプレイヤーのビットボードを取得する
 // ==================================================
-bitboard_t get_opponent_bb(board_t *board) {
+bitboard_t get_opp_bb(board_t *board) {
   return board->player == WHITE ? board->black : board->white;
 }
 
@@ -99,12 +99,12 @@ bitboard_t get_opponent_bb(board_t *board) {
 // ==================================================
 bitboard_t get_legal_moves(board_t *board) {
   bitboard_t t, mask, legal_moves = 0;
-  bitboard_t player   = get_player_bb(board);
-  bitboard_t opponent = get_opponent_bb(board);
+  bitboard_t own = get_own_bb(board);
+  bitboard_t opp = get_opp_bb(board);
 
   // 空マスを取得
   // 黒石と白石の場所のNOTで取得
-  bitboard_t blank = ~(player | opponent);
+  bitboard_t blank = ~(own | opp);
 
   // --------------------------------------------------
   // 右方向の処理
@@ -112,14 +112,14 @@ bitboard_t get_legal_moves(board_t *board) {
   // 別行の値がシフトしてこないようにマスクする
   // 一番端の他石が反転することはない(関係ない)ので
   // 両端が0のビットボードと他石のANDをとればよい
-  mask = opponent & 0x7e7e7e7e7e7e7e7e;
+  mask = opp & 0x7e7e7e7e7e7e7e7e;
   // 反転可能な石は最大6つ
-  t  = mask & (player << 1); //自石の左隣の他石を調べる
-  t |= mask & (t << 1);      //さらにその左隣の他石を調べる
-  t |= mask & (t << 1);      //さらにその左隣の他石を調べる
-  t |= mask & (t << 1);      //さらにその左隣の他石を調べる
-  t |= mask & (t << 1);      //さらにその左隣の他石を調べる
-  t |= mask & (t << 1);      //さらにその左隣の他石を調べる
+  t  = mask & (own << 1); //自石の左隣の他石を調べる
+  t |= mask & (t << 1);   //さらにその左隣の他石を調べる
+  t |= mask & (t << 1);   //さらにその左隣の他石を調べる
+  t |= mask & (t << 1);   //さらにその左隣の他石を調べる
+  t |= mask & (t << 1);   //さらにその左隣の他石を調べる
+  t |= mask & (t << 1);   //さらにその左隣の他石を調べる
   // 上記tの左隣が自石の置ける位置
   // もちろんそこは空マスでなければならない
   legal_moves |= blank & (t << 1);
@@ -128,8 +128,8 @@ bitboard_t get_legal_moves(board_t *board) {
   // 左方向の処理
   // 考え方は右方向の処理と同じ(他の方向も同様)
   // --------------------------------------------------
-  mask = opponent & 0x7e7e7e7e7e7e7e7e;
-  t  = mask & (player >> 1);
+  mask = opp & 0x7e7e7e7e7e7e7e7e;
+  t  = mask & (own >> 1);
   t |= mask & (t >> 1);
   t |= mask & (t >> 1);
   t |= mask & (t >> 1);
@@ -140,8 +140,8 @@ bitboard_t get_legal_moves(board_t *board) {
   // --------------------------------------------------
   // 上方向の処理
   // --------------------------------------------------
-  mask = opponent & 0x00ffffffffffff00;
-  t  = mask & (player << 8);
+  mask = opp & 0x00ffffffffffff00;
+  t  = mask & (own << 8);
   t |= mask & (t << 8);
   t |= mask & (t << 8);
   t |= mask & (t << 8);
@@ -152,8 +152,8 @@ bitboard_t get_legal_moves(board_t *board) {
   // --------------------------------------------------
   // 下方向の処理
   // --------------------------------------------------
-  mask = opponent & 0x00ffffffffffff00;
-  t  = mask & (player >> 8);
+  mask = opp & 0x00ffffffffffff00;
+  t  = mask & (own >> 8);
   t |= mask & (t >> 8);
   t |= mask & (t >> 8);
   t |= mask & (t >> 8);
@@ -164,8 +164,8 @@ bitboard_t get_legal_moves(board_t *board) {
   // --------------------------------------------------
   // 右上方向の処理
   // --------------------------------------------------
-  mask = opponent & 0x007e7e7e7e7e7e00;
-  t  = mask & (player << 7);
+  mask = opp & 0x007e7e7e7e7e7e00;
+  t  = mask & (own << 7);
   t |= mask & (t << 7);
   t |= mask & (t << 7);
   t |= mask & (t << 7);
@@ -176,8 +176,8 @@ bitboard_t get_legal_moves(board_t *board) {
   // --------------------------------------------------
   // 左上方向の処理
   // --------------------------------------------------
-  mask = opponent & 0x007e7e7e7e7e7e00;
-  t  = mask & (player << 9);
+  mask = opp & 0x007e7e7e7e7e7e00;
+  t  = mask & (own << 9);
   t |= mask & (t << 9);
   t |= mask & (t << 9);
   t |= mask & (t << 9);
@@ -188,8 +188,8 @@ bitboard_t get_legal_moves(board_t *board) {
   // --------------------------------------------------
   // 右下方向の処理
   // --------------------------------------------------
-  mask = opponent & 0x007e7e7e7e7e7e00;
-  t  = mask & (player >> 9);
+  mask = opp & 0x007e7e7e7e7e7e00;
+  t  = mask & (own >> 9);
   t |= mask & (t >> 9);
   t |= mask & (t >> 9);
   t |= mask & (t >> 9);
@@ -200,8 +200,8 @@ bitboard_t get_legal_moves(board_t *board) {
   // --------------------------------------------------
   // 左下方向の処理
   // --------------------------------------------------
-  mask = opponent & 0x007e7e7e7e7e7e00;
-  t  = mask & (player >> 7);
+  mask = opp & 0x007e7e7e7e7e7e00;
+  t  = mask & (own >> 7);
   t |= mask & (t >> 7);
   t |= mask & (t >> 7);
   t |= mask & (t >> 7);
@@ -218,11 +218,11 @@ bitboard_t get_legal_moves(board_t *board) {
 // ==================================================
 bitboard_t get_flip_pattern(board_t *board, bitboard_t mv) {
   bitboard_t temp, mask, flip = 0;
-  bitboard_t player   = get_player_bb(board);
-  bitboard_t opponent = get_opponent_bb(board);
+  bitboard_t own = get_own_bb(board);
+  bitboard_t opp = get_opp_bb(board);
 
   // 着手箇所が空マスで無いなら終了(通常はありえない)
-  if (((player | opponent) & mv) != 0) {
+  if (((own | opp) & mv) != 0) {
     return flip;
   }
 
@@ -234,14 +234,14 @@ bitboard_t get_flip_pattern(board_t *board, bitboard_t mv) {
   // 着手箇所が次の行へ進んでしまった時のためにマスクする
   mask = (mv >> 1) & 0x7f7f7f7f7f7f7f7f;
   // 他石が連続している間だけ繰り返し
-  while (mask != 0 && (mask & opponent) != 0) {
+  while (mask != 0 && (mask & opp) != 0) {
     // 反転箇所を保存
     temp |= mask;
     // さらに右隣を調べる
     mask = (mask >> 1) & 0x7f7f7f7f7f7f7f7f;
   }
   // 他石の繰り返しが終わった直後に自石がないといけない
-  if ((mask & player) != 0) {
+  if ((mask & own) != 0) {
     // OKなら反転パターンに追加
     flip |= temp;
   }
@@ -252,11 +252,11 @@ bitboard_t get_flip_pattern(board_t *board, bitboard_t mv) {
   // --------------------------------------------------
   temp = 0;
   mask = (mv << 1) & 0xfefefefefefefefe;
-  while (mask != 0 && (mask & opponent) != 0) {
+  while (mask != 0 && (mask & opp) != 0) {
     temp |= mask;
     mask = (mask << 1) & 0xfefefefefefefefe;
   }
-  if ((mask & player) != 0) {
+  if ((mask & own) != 0) {
     flip |= temp;
   }
 
@@ -265,11 +265,11 @@ bitboard_t get_flip_pattern(board_t *board, bitboard_t mv) {
   // --------------------------------------------------
   temp = 0;
   mask = (mv << 8) & 0xffffffffffffff00;
-  while (mask != 0 && (mask & opponent) != 0) {
+  while (mask != 0 && (mask & opp) != 0) {
     temp |= mask;
     mask = (mask << 8) & 0xffffffffffffff00;
   }
-  if ((mask & player) != 0) {
+  if ((mask & own) != 0) {
     flip |= temp;
   }
 
@@ -278,11 +278,11 @@ bitboard_t get_flip_pattern(board_t *board, bitboard_t mv) {
   // --------------------------------------------------
   temp = 0;
   mask = (mv >> 8) & 0x00ffffffffffffff;
-  while (mask != 0 && (mask & opponent) != 0) {
+  while (mask != 0 && (mask & opp) != 0) {
     temp |= mask;
     mask = (mask >> 8) & 0x00ffffffffffffff;
   }
-  if ((mask & player) != 0) {
+  if ((mask & own) != 0) {
     flip |= temp;
   }
 
@@ -291,11 +291,11 @@ bitboard_t get_flip_pattern(board_t *board, bitboard_t mv) {
   // --------------------------------------------------
   temp = 0;
   mask = (mv << 7) & 0x7f7f7f7f7f7f7f00;
-  while (mask != 0 && (mask & opponent) != 0) {
+  while (mask != 0 && (mask & opp) != 0) {
     temp |= mask;
     mask = (mask << 7) & 0x7f7f7f7f7f7f7f00;
   }
-  if ((mask & player) != 0) {
+  if ((mask & own) != 0) {
     flip |= temp;
   }
 
@@ -304,11 +304,11 @@ bitboard_t get_flip_pattern(board_t *board, bitboard_t mv) {
   // --------------------------------------------------
   temp = 0;
   mask = (mv << 9) & 0xfefefefefefefe00;
-  while (mask != 0 && (mask & opponent) != 0) {
+  while (mask != 0 && (mask & opp) != 0) {
     temp |= mask;
     mask = (mask << 9) & 0xfefefefefefefe00;
   }
-  if ((mask & player) != 0) {
+  if ((mask & own) != 0) {
     flip |= temp;
   }
 
@@ -317,11 +317,11 @@ bitboard_t get_flip_pattern(board_t *board, bitboard_t mv) {
   // --------------------------------------------------
   temp = 0;
   mask = (mv >> 9) & 0x007f7f7f7f7f7f7f;
-  while (mask != 0 && (mask & opponent) != 0) {
+  while (mask != 0 && (mask & opp) != 0) {
     temp |= mask;
     mask = (mask >> 9) & 0x007f7f7f7f7f7f7f;
   }
-  if ((mask & player) != 0) {
+  if ((mask & own) != 0) {
     flip |= temp;
   }
 
@@ -330,11 +330,11 @@ bitboard_t get_flip_pattern(board_t *board, bitboard_t mv) {
   // --------------------------------------------------
   temp = 0;
   mask = (mv >> 7) & 0x00fefefefefefefe;
-  while (mask != 0 && (mask & opponent) != 0) {
+  while (mask != 0 && (mask & opp) != 0) {
     temp |= mask;
     mask = (mask >> 7) & 0x00fefefefefefefe;
   }
-  if ((mask & player) != 0) {
+  if ((mask & own) != 0) {
     flip |= temp;
   }
 

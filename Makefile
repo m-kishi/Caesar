@@ -3,7 +3,7 @@ CFLAGS  = -Wall
 HDRS    = head.hpp csar.hpp
 LDFLAGS =
 LIBS    =
-OBJS    = main.o proc.o disp.o csar.o
+OBJS    = main.o proc.o disp.o csar.o eval.o
 PROGRAM = csar
 
 all: $(PROGRAM)

@@ -56,10 +56,10 @@ int count_of_discs(bitboard_t);
 void next_turn(board_t*, bitboard_t);
 // 局面の状態をチェックする
 void check_board_status(board_t*);
-// 現在手番のプレイヤのビットボードを取得する
-bitboard_t get_player_bb(board_t*);
-// 現在手番でないプレイヤのビットボードを取得する
-bitboard_t get_opponent_bb(board_t*);
+// 現在手番のプレイヤーのビットボードを取得する
+bitboard_t get_own_bb(board_t*);
+// 現在手番でないプレイヤーのビットボードを取得する
+bitboard_t get_opp_bb(board_t*);
 // 合法手の一覧を生成する
 bitboard_t get_legal_moves(board_t*);
 // 反転する石の場所を取得する
@@ -76,5 +76,5 @@ void display_legal_moves(bitboard_t);
 void display_csar_move(bitboard_t);
 // 盤面の座標からビットボードへ変換する
 bitboard_t cr_to_bb(int, int);
-// プレイヤの入力を取得する
+// プレイヤーの入力を取得する
 bitboard_t get_player_move(board_t*);
