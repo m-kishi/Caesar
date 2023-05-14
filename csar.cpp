@@ -25,6 +25,9 @@ void board_copy(board_t*, board_t*);
 // AIの手を取得する
 // ==================================================
 bitboard_t get_csar_move(board_t *board) {
+  // 盤面のバックアップ
+  board_t backup;
+  board_copy(&backup, board);
   // すべての合法手について繰り返し
   bitboard_t mv, move = 0;
   bitboard_t pos = 0x8000000000000000;
@@ -33,8 +36,12 @@ bitboard_t get_csar_move(board_t *board) {
   for (; pos != 0; pos = pos >> 1) {
     mv = (legal_moves & pos);
     if (mv == 0) continue;
+    // 着手して盤面を進める
+    next_turn(board, mv);
     // 指し手の評価値を取得
     score = -nega_max_search(board, DEPTH, alpha, beta, false);
+    // 盤面を元に戻す
+    board_copy(board, &backup);
     // 評価値と差し手の更新
     if (alpha < score) {
       alpha = score;

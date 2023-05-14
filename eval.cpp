@@ -18,7 +18,8 @@ int get_weight(bitboard_t);
 // 評価関数
 // ==================================================
 int evaluate(board_t *board) {
-  return cell_weight(board);
+  return diff_discs(board);
+  // return cell_weight(board);
 }
 
 // ==================================================
